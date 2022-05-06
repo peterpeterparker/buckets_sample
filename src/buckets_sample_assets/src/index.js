@@ -28,8 +28,6 @@ const initCanister = async () => {
 
 const sayHello = async () => {
   try {
-    console.log(bucket);
-
     const actor = await createBucketActor({
       canisterId: bucket
     });
