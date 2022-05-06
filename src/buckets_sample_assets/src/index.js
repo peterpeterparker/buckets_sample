@@ -1,16 +1,49 @@
-import { buckets_sample } from "../../declarations/buckets_sample";
+import {Actor, HttpAgent} from "@dfinity/agent";
+import {buckets_sample} from "../../declarations/buckets_sample";
+import {idlFactory} from "../../declarations/bucket";
+
+export const createBucketActor = async ({canisterId}) => {
+    const agent = new HttpAgent();
+
+    if(process.env.NODE_ENV !== "production") {
+        await agent.fetchRootKey();
+    }
+
+    return Actor.createActor(idlFactory, {
+        agent,
+        canisterId
+    });
+};
+
+let bucket;
 
 const initCanister = async () => {
     try {
-        const principal = await buckets_sample.init();
-        console.log('Init', principal.toText());
+        bucket = await buckets_sample.init();
+        console.log('New bucket:', bucket.toText());
     } catch (err) {
         console.error(err);
     }
 }
+
+const sayHello = async () => {
+    try {
+
+        console.log(bucket);
+
+        const actor = await createBucketActor({canisterId: bucket});
+        console.log(await actor.say());
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 const init = () => {
   const btnInit = document.querySelector("button#init");
   btnInit.addEventListener("click", initCanister);
+
+    const btnSay = document.querySelector("button#say");
+    btnSay.addEventListener("click", sayHello);
 };
 
 document.addEventListener("DOMContentLoaded", init);
