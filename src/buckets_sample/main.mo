@@ -10,7 +10,7 @@ actor Main {
   private stable var canisterId: ?Principal = null;
 
   private let ic : IC.Self = actor "aaaaa-aa";
-  
+
   public shared({ caller }) func init(): async (Principal) {
     Cycles.add(1_000_000_000_000);
     let b = await Bucket.Bucket("User1");
@@ -36,5 +36,9 @@ actor Main {
         return canisterId;
       };
     };
+  };
+
+  public query func getCanisterId() : async ?Principal {
+    canisterId
   };
 };
